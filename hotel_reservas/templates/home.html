@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio | Hotel Reservas{% endblock %}
+
+{% block content %}
+  <div class="p-5 mb-4 bg-light rounded-3">
+    <div class="container-fluid py-3">
+      <h1 class="display-6 fw-bold">Bienvenido a Hotel Reservas</h1>
+      <p class="col-md-8 fs-5">Gestiona habitaciones, reservas y operaciones desde un solo lugar.</p>
+      <a class="btn btn-primary btn-lg" href="{% url 'rooms:list' %}">Ver habitaciones</a>
+    </div>
+  </div>
+{% endblock %}

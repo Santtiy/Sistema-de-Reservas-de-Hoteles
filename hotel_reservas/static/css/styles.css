@@ -1,0 +1,12 @@
+:root {
+  --brand-primary: #0d6efd;
+  --brand-accent: #198754;
+}
+
+body {
+  background: #f7f7f9;
+}
+
+.navbar-brand {
+  letter-spacing: 0.3px;
+}
