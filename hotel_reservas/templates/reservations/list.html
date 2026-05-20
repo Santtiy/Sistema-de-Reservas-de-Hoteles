@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis reservas | Hotel Reservas{% endblock %}
+
+{% block content %}
+  <div class="container-xxl py-4">
+    <div class="page-head">
+      <div>
+        <h1>Mis reservas</h1>
+        <div class="sub">Consulta y administra tus reservas</div>
+      </div>
+      <a class="btn btn-gold" href="{% url 'rooms:list' %}"><i class="bi bi-plus-lg me-1"></i>Nueva reserva</a>
+    </div>
+
+    <div class="hr-tabs">
+      <button class="active">Todas</button>
+      <button>Activas</button>
+      <button>Canceladas</button>
+      <button>Historial</button>
+    </div>
+
+    <div class="card p-4">
+      <div class="empty">
+        <i class="bi bi-calendar-x"></i>
+        <h5 style="color: var(--navy); margin-bottom: 6px;">Aun no tienes reservas</h5>
+        <div class="mb-3">Explora nuestras habitaciones y reserva con confianza.</div>
+        <a class="btn btn-gold" href="{% url 'rooms:list' %}">Ver habitaciones</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | Hotel Reservas{% endblock %}
+
+{% block content %}
+  <div class="container-xxl py-4">
+    <div class="page-head">
+      <div>
+        <h1>Dashboard</h1>
+        <div class="sub">Vista global del hotel</div>
+      </div>
+      <button class="btn btn-outline-gold"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar</button>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-4 col-xl-2"><div class="card kpi-card"><div class="kpi-icon"><i class="bi bi-buildings"></i></div><div class="kpi-value">12 / 48</div><div class="kpi-label">Disponibles hoy</div><div class="kpi-delta up"><i class="bi bi-arrow-up"></i>+3 vs mes anterior</div></div></div>
+      <div class="col-6 col-md-4 col-xl-2"><div class="card kpi-card"><div class="kpi-icon"><i class="bi bi-journal-bookmark"></i></div><div class="kpi-value">38</div><div class="kpi-label">Reservas activas</div><div class="kpi-delta up"><i class="bi bi-arrow-up"></i>+12% vs mes anterior</div></div></div>
+      <div class="col-6 col-md-4 col-xl-2"><div class="card kpi-card"><div class="kpi-icon"><i class="bi bi-calendar-week"></i></div><div class="kpi-value">156</div><div class="kpi-label">Reservas del mes</div><div class="kpi-delta up"><i class="bi bi-arrow-up"></i>+24% vs mes anterior</div></div></div>
+      <div class="col-6 col-md-4 col-xl-2"><div class="card kpi-card"><div class="kpi-icon"><i class="bi bi-currency-dollar"></i></div><div class="kpi-value">$24,500</div><div class="kpi-label">Ingresos del mes</div><div class="kpi-delta up"><i class="bi bi-arrow-up"></i>+18% vs mes anterior</div></div></div>
+      <div class="col-6 col-md-4 col-xl-2"><div class="card kpi-card"><div class="kpi-icon"><i class="bi bi-bar-chart"></i></div><div class="kpi-value">78%</div><div class="kpi-label">Ocupacion hoy</div><div class="kpi-delta down"><i class="bi bi-arrow-down"></i>-4% vs mes anterior</div></div></div>
+      <div class="col-6 col-md-4 col-xl-2"><div class="card kpi-card"><div class="kpi-icon"><i class="bi bi-person-plus"></i></div><div class="kpi-value">34</div><div class="kpi-label">Nuevos clientes</div><div class="kpi-delta up"><i class="bi bi-arrow-up"></i>+9 vs mes anterior</div></div></div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="card chart-card">
+          <div class="chart-title"><span><i class="bi bi-graph-up text-gold me-1"></i>Reservas por mes</span><span class="muted small">Ultimos 12 meses</span></div>
+          <div style="position: relative; height: 280px;"><canvas id="chart-reservas"></canvas></div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card chart-card">
+          <div class="chart-title"><span><i class="bi bi-currency-dollar text-gold me-1"></i>Ingresos por mes</span><span class="muted small">Ultimos 12 meses</span></div>
+          <div style="position: relative; height: 280px;"><canvas id="chart-ingresos"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    const reservasCtx = document.getElementById('chart-reservas');
+    const ingresosCtx = document.getElementById('chart-ingresos');
+
+    if (reservasCtx && ingresosCtx && window.Chart) {
+      new Chart(reservasCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr','May'],
+          datasets: [{
+            label: 'Reservas',
+            data: [42, 51, 62, 78, 65, 90, 124, 98, 82, 105, 130, 156],
+            borderColor: '#1a2e4a',
+            backgroundColor: 'rgba(26,46,74,0.1)',
+            tension: 0.35,
+            fill: true,
+            borderWidth: 3,
+            pointBackgroundColor: '#1a2e4a',
+            pointRadius: 3,
+          }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } },
+      });
+
+      new Chart(ingresosCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jun','Jul','Ago','Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr','May'],
+          datasets: [{
+            label: 'Ingresos',
+            data: [5400, 6850, 8100, 10250, 8800, 12100, 18400, 14200, 11800, 15600, 19800, 24500],
+            borderColor: '#c9a84c',
+            backgroundColor: 'rgba(201,168,76,0.15)',
+            tension: 0.35,
+            fill: true,
+            borderWidth: 3,
+            pointBackgroundColor: '#c9a84c',
+            pointRadius: 3,
+          }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } },
+      });
+    }
+  </script>
+{% endblock %}

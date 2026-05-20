@@ -2,4 +2,4 @@ from django.shortcuts import render
 
 
 def placeholder(request):
-    return render(request, "base.html", {"title": "En construccion"})
+    return render(request, "rooms/list.html")
