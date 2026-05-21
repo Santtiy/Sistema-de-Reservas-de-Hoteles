@@ -209,16 +209,16 @@
           <div class="card card-elev p-3">
             <div class="fw-semibold mb-2" style="color:var(--navy);"><i class="bi bi-download me-2 text-gold"></i>Exportación rápida</div>
             <div class="d-flex flex-wrap gap-2">
-              <a href="{% url 'dashboard:export_reservations_pdf' %}" class="btn btn-sm btn-outline-secondary">
+              <a href="{% url 'dashboard:reservations_pdf' %}" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-filetype-pdf me-1"></i>Reservas PDF
               </a>
-              <a href="{% url 'dashboard:export_reservations_excel' %}" class="btn btn-sm btn-outline-secondary">
+              <a href="{% url 'dashboard:reservations_excel' %}" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-filetype-xlsx me-1"></i>Reservas Excel
               </a>
-              <a href="{% url 'dashboard:export_revenue_pdf' %}" class="btn btn-sm btn-outline-secondary">
+              <a href="{% url 'dashboard:revenue_pdf' %}" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-filetype-pdf me-1"></i>Ingresos PDF
               </a>
-              <a href="{% url 'dashboard:export_occupancy_pdf' %}" class="btn btn-sm btn-outline-secondary">
+              <a href="{% url 'dashboard:occupancy_pdf' %}" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-filetype-pdf me-1"></i>Ocupación PDF
               </a>
             </div>

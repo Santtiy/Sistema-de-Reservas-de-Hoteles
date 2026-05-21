@@ -46,11 +46,11 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'dashboard:reports' %}"><i class="bi bi-bar-chart-line me-2"></i>Ver reportes</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="{% url 'dashboard:export_reservations_pdf' %}"><i class="bi bi-filetype-pdf me-2"></i>Reservas PDF</a></li>
-              <li><a class="dropdown-item" href="{% url 'dashboard:export_reservations_excel' %}"><i class="bi bi-filetype-xlsx me-2"></i>Reservas Excel</a></li>
-              <li><a class="dropdown-item" href="{% url 'dashboard:export_revenue_pdf' %}"><i class="bi bi-filetype-pdf me-2"></i>Ingresos PDF</a></li>
-              <li><a class="dropdown-item" href="{% url 'dashboard:export_revenue_excel' %}"><i class="bi bi-filetype-xlsx me-2"></i>Ingresos Excel</a></li>
-              <li><a class="dropdown-item" href="{% url 'dashboard:export_occupancy_pdf' %}"><i class="bi bi-filetype-pdf me-2"></i>Ocupación PDF</a></li>
+              <li><a class="dropdown-item" href="{% url 'dashboard:reservations_pdf' %}"><i class="bi bi-filetype-pdf me-2"></i>Reservas PDF</a></li>
+              <li><a class="dropdown-item" href="{% url 'dashboard:reservations_excel' %}"><i class="bi bi-filetype-xlsx me-2"></i>Reservas Excel</a></li>
+              <li><a class="dropdown-item" href="{% url 'dashboard:revenue_pdf' %}"><i class="bi bi-filetype-pdf me-2"></i>Ingresos PDF</a></li>
+              <li><a class="dropdown-item" href="{% url 'dashboard:revenue_excel' %}"><i class="bi bi-filetype-xlsx me-2"></i>Ingresos Excel</a></li>
+              <li><a class="dropdown-item" href="{% url 'dashboard:occupancy_pdf' %}"><i class="bi bi-filetype-pdf me-2"></i>Ocupación PDF</a></li>
             </ul>
           </div>
         {% endif %}
