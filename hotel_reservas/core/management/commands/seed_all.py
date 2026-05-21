@@ -9,6 +9,7 @@ import random
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from faker import Faker
@@ -41,8 +42,10 @@ class Command(BaseCommand):
             Amenity.objects.all().delete()
             RoomType.objects.all().delete()
             User.objects.exclude(is_superuser=True).delete()
+            Group.objects.filter(name__in=["Cliente", "Recepcionista", "Admin"]).delete()
             self.stdout.write(self.style.WARNING("Datos anteriores eliminados."))
 
+        self._seed_groups_and_permissions()
         self._seed_users()
         amenities = self._seed_amenities()
         room_types = self._seed_room_types()
@@ -50,6 +53,157 @@ class Command(BaseCommand):
         self._seed_reservations(rooms)
 
         self.stdout.write(self.style.SUCCESS("¡Seed completado exitosamente!"))
+
+    # ── Grupos y permisos ─────────────────────────────────────────────────────
+
+    def _seed_groups_and_permissions(self):
+        self.stdout.write("Creando grupos y asignando permisos...")
+
+        # Garantiza que todos los permisos existan antes de buscarlos
+        from django.apps import apps as django_apps
+        from django.contrib.auth.management import create_permissions
+        for app_config in django_apps.get_app_configs():
+            create_permissions(app_config, verbosity=0)
+
+        def get_perms(pairs):
+            result = []
+            for app_label, codename in pairs:
+                try:
+                    result.append(
+                        Permission.objects.get(
+                            content_type__app_label=app_label,
+                            codename=codename,
+                        )
+                    )
+                except Permission.DoesNotExist:
+                    self.stdout.write(
+                        self.style.WARNING(f"  Permiso no encontrado: {app_label}.{codename}")
+                    )
+            return result
+
+        # ── Cliente ───────────────────────────────────────────────────────────
+        cliente_group, _ = Group.objects.get_or_create(name="Cliente")
+        cliente_group.permissions.set(get_perms([
+            # Profile (cambios restringidos a "solo suyo" en las vistas)
+            ("accounts", "change_profile"),
+            ("accounts", "view_profile"),
+            # Rooms — solo lectura
+            ("rooms", "view_roomtype"),
+            ("rooms", "view_room"),
+            ("rooms", "view_roomimage"),
+            ("rooms", "view_amenity"),
+            # Reservations (filtrado a "solo suyas" en las vistas)
+            ("reservations", "add_reservation"),
+            ("reservations", "change_reservation"),  # cancelar si >48h — validado en vista
+            ("reservations", "view_reservation"),
+        ]))
+
+        # ── Recepcionista ─────────────────────────────────────────────────────
+        recep_group, _ = Group.objects.get_or_create(name="Recepcionista")
+        recep_group.permissions.set(get_perms([
+            # Accounts
+            ("accounts", "view_customuser"),
+            ("accounts", "change_profile"),
+            ("accounts", "view_profile"),
+            # Room Types
+            ("rooms", "add_roomtype"),
+            ("rooms", "change_roomtype"),
+            ("rooms", "delete_roomtype"),
+            ("rooms", "view_roomtype"),
+            # Rooms
+            ("rooms", "add_room"),
+            ("rooms", "change_room"),
+            ("rooms", "delete_room"),
+            ("rooms", "view_room"),
+            # Room Images
+            ("rooms", "add_roomimage"),
+            ("rooms", "change_roomimage"),
+            ("rooms", "delete_roomimage"),
+            ("rooms", "view_roomimage"),
+            # Amenities
+            ("rooms", "add_amenity"),
+            ("rooms", "change_amenity"),
+            ("rooms", "delete_amenity"),
+            ("rooms", "view_amenity"),
+            # Reservations
+            ("reservations", "change_reservation"),  # cambiar estado — validado en vista
+            ("reservations", "view_reservation"),
+            # Payments
+            ("reservations", "add_payment"),
+            ("reservations", "change_payment"),  # reembolsos — validado en vista
+            ("reservations", "view_payment"),
+            # Status Log
+            ("reservations", "add_reservationstatuslog"),
+            ("reservations", "view_reservationstatuslog"),
+        ]))
+
+        # ── Admin ─────────────────────────────────────────────────────────────
+        admin_group, _ = Group.objects.get_or_create(name="Admin")
+        admin_group.permissions.set(get_perms([
+            # Accounts — acceso total
+            ("accounts", "add_customuser"),
+            ("accounts", "change_customuser"),
+            ("accounts", "delete_customuser"),
+            ("accounts", "view_customuser"),
+            ("accounts", "add_profile"),
+            ("accounts", "change_profile"),
+            ("accounts", "delete_profile"),
+            ("accounts", "view_profile"),
+            # Room Types
+            ("rooms", "add_roomtype"),
+            ("rooms", "change_roomtype"),
+            ("rooms", "delete_roomtype"),
+            ("rooms", "view_roomtype"),
+            # Rooms
+            ("rooms", "add_room"),
+            ("rooms", "change_room"),
+            ("rooms", "delete_room"),
+            ("rooms", "view_room"),
+            # Room Images
+            ("rooms", "add_roomimage"),
+            ("rooms", "change_roomimage"),
+            ("rooms", "delete_roomimage"),
+            ("rooms", "view_roomimage"),
+            # Amenities
+            ("rooms", "add_amenity"),
+            ("rooms", "change_amenity"),
+            ("rooms", "delete_amenity"),
+            ("rooms", "view_amenity"),
+            # Reservations
+            ("reservations", "change_reservation"),
+            ("reservations", "delete_reservation"),
+            ("reservations", "view_reservation"),
+            # Payments
+            ("reservations", "add_payment"),
+            ("reservations", "change_payment"),
+            ("reservations", "delete_payment"),
+            ("reservations", "view_payment"),
+            # Status Log
+            ("reservations", "add_reservationstatuslog"),
+            ("reservations", "change_reservationstatuslog"),
+            ("reservations", "delete_reservationstatuslog"),
+            ("reservations", "view_reservationstatuslog"),
+            # Solo Admin: panel /admin/ de Django
+            ("admin", "add_logentry"),
+            ("admin", "change_logentry"),
+            ("admin", "delete_logentry"),
+            ("admin", "view_logentry"),
+            ("auth", "add_group"),
+            ("auth", "change_group"),
+            ("auth", "delete_group"),
+            ("auth", "view_group"),
+            ("auth", "add_permission"),
+            ("auth", "change_permission"),
+            ("auth", "delete_permission"),
+            ("auth", "view_permission"),
+            ("contenttypes", "view_contenttype"),
+            ("sessions", "add_session"),
+            ("sessions", "change_session"),
+            ("sessions", "delete_session"),
+            ("sessions", "view_session"),
+        ]))
+
+        self.stdout.write("  Grupos listos: Cliente, Recepcionista, Admin")
 
     # ── Usuarios ──────────────────────────────────────────────────────────────
 
@@ -123,6 +277,21 @@ class Command(BaseCommand):
                 u.save()
             self.clientes.append(User.objects.get(email=email))
         self.stdout.write(f"  5 clientes creados")
+
+        # Asignar grupos según rol (idempotente: add ignora duplicados)
+        role_group_map = {
+            "ADMIN": "Admin",
+            "RECEPCIONISTA": "Recepcionista",
+            "CLIENTE": "Cliente",
+        }
+        for role, group_name in role_group_map.items():
+            try:
+                group = Group.objects.get(name=group_name)
+                for user in User.objects.filter(role=role):
+                    user.groups.add(group)
+            except Group.DoesNotExist:
+                pass
+        self.stdout.write("  Usuarios asignados a sus grupos")
 
     # ── Amenidades ────────────────────────────────────────────────────────────
 
