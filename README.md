@@ -271,3 +271,5 @@ Proyecto académico desarrollado como trabajo final de curso.
 
 - **Santtiy** — [GitHub](https://github.com/Santtiy)
 - **SamuelMenan** — [GitHub](https://github.com/SamuelMenan)
+- **Juanenriquezcc** — [GitHub](https://github.com/Juanenriquezcc)
+- **benavides17**— [GitHub](https://github.com/benavides17)
