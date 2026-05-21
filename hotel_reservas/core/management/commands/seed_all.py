@@ -59,25 +59,26 @@ class Command(BaseCommand):
     def _seed_groups_and_permissions(self):
         self.stdout.write("Creando grupos y asignando permisos...")
 
-        # Garantiza que todos los permisos existan antes de buscarlos
+        # Garantiza que los content types y permisos existan en la BD
+        from django.contrib.contenttypes.management import create_contenttypes
         from django.apps import apps as django_apps
         from django.contrib.auth.management import create_permissions
         for app_config in django_apps.get_app_configs():
+            create_contenttypes(app_config, verbosity=0)
             create_permissions(app_config, verbosity=0)
 
         def get_perms(pairs):
             result = []
             for app_label, codename in pairs:
-                try:
-                    result.append(
-                        Permission.objects.get(
-                            content_type__app_label=app_label,
-                            codename=codename,
-                        )
-                    )
-                except Permission.DoesNotExist:
+                perm = Permission.objects.filter(
+                    content_type__app_label=app_label,
+                    codename=codename,
+                ).first()
+                if perm:
+                    result.append(perm)
+                else:
                     self.stdout.write(
-                        self.style.WARNING(f"  Permiso no encontrado: {app_label}.{codename}")
+                        self.style.WARNING(f"  ! Permiso no encontrado: {app_label}.{codename}")
                     )
             return result
 
@@ -203,7 +204,8 @@ class Command(BaseCommand):
             ("sessions", "view_session"),
         ]))
 
-        self.stdout.write("  Grupos listos: Cliente, Recepcionista, Admin")
+        for g in [cliente_group, recep_group, admin_group]:
+            self.stdout.write(f"  {g.name}: {g.permissions.count()} permisos asignados")
 
     # ── Usuarios ──────────────────────────────────────────────────────────────
 
