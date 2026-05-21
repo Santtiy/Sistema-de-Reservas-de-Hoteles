@@ -25,4 +25,5 @@ ENV/
 # Logs
 *.log
 .claude
-docs/
+# docs/ rastreado para informe_final.md
+# docs/
