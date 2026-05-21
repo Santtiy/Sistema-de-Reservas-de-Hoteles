@@ -21,6 +21,8 @@ ENV/
 # Tools
 .vscode/
 .idea/
-
+.docs
 # Logs
 *.log
+.claude
+docs/
