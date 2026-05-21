@@ -21,6 +21,9 @@ ENV/
 # Tools
 .vscode/
 .idea/
-
+.docs
 # Logs
 *.log
+.claude
+# docs/ rastreado para informe_final.md
+# docs/

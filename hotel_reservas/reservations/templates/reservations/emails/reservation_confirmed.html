@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <title>Reserva confirmada</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #1f2937;">
+  <h2 style="color: #1a2e4a;">Reserva confirmada</h2>
+  <p>Hola {{ reservation.guest.get_full_name|default:reservation.guest.username }},</p>
+  <p>Tu reserva fue confirmada con el codigo <strong>{{ reservation.confirmation_code }}</strong>.</p>
+  <p>
+    Habitacion {{ reservation.room.number }} · {{ reservation.room.room_type.name }}<br>
+    Check-in: {{ reservation.check_in }}<br>
+    Check-out: {{ reservation.check_out }}<br>
+    Total: ${{ reservation.total_price }}
+  </p>
+  <p>Adjuntamos tu codigo QR para el check-in.</p>
+  <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR" style="width: 200px; height: 200px;">
+  <p>Gracias por elegirnos.</p>
+</body>
+</html>

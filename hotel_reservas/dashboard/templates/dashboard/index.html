@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="container-xxl py-4">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+      <h1 class="h3 mb-1">Panel de administracion</h1>
+      <p class="text-muted mb-0">Resumen operativo del hotel.</p>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">Habitaciones</div>
+          <div class="display-6 fw-semibold">{{ kpis.total_rooms }}</div>
+          <div class="small text-muted">Disponibles hoy: {{ kpis.available_rooms_today }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">Reservas activas</div>
+          <div class="display-6 fw-semibold">{{ kpis.active_reservations }}</div>
+          <div class="small text-muted">En curso o pendientes</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">Reservas este mes</div>
+          <div class="display-6 fw-semibold">{{ kpis.reservations_this_month }}</div>
+          <div class="small text-muted">Check-in en el mes actual</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-3">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small">Ingresos este mes</div>
+          <div class="display-6 fw-semibold">${{ kpis.revenue_this_month|floatformat:2 }}</div>
+          <div class="small text-muted">Basado en reservas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-12 col-lg-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Reservas por mes</h2>
+          <canvas id="chart-reservations-month" height="140"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Ingresos por mes</h2>
+          <canvas id="chart-revenue-month" height="140"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Top habitaciones</h2>
+          <canvas id="chart-top-rooms" height="180"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Reservas por estado</h2>
+          <canvas id="chart-status" height="180"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Ocupacion por tipo</h2>
+          <canvas id="chart-occupancy" height="120"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const palette = {
+    blue: "#4f7cff",
+    cyan: "#48d5ff",
+    pink: "#ff6f91",
+    violet: "#8b7bff",
+    slate: "#c7d2e5",
+    dark: "#1f2a3d",
+  };
+
+  async function loadChart(url, canvasId, type, label, colors, extraOptions = {}) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    let payload = { labels: [], data: [] };
+    try {
+      const response = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+      if (response.ok) {
+        payload = await response.json();
+      }
+    } catch (error) {
+      payload = { labels: [], data: [] };
+    }
+
+    let labels = payload.labels || [];
+    let data = payload.data || [];
+    let noData = false;
+
+    if (!labels.length || !data.length) {
+      labels = ["Sin datos"];
+      data = [0];
+      noData = true;
+    }
+
+    const config = {
+      type,
+      data: {
+        labels,
+        datasets: [
+          {
+            label,
+            data,
+            backgroundColor: Array.isArray(colors) ? colors : [colors],
+            borderColor: Array.isArray(colors) ? colors : [colors],
+            borderWidth: 2,
+            fill: type === "line" ? true : false,
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: !noData, position: "bottom" },
+          tooltip: { enabled: !noData },
+        },
+        scales: {
+          x: { ticks: { color: palette.slate } },
+          y: { ticks: { color: palette.slate }, beginAtZero: true },
+        },
+        ...extraOptions,
+      },
+    };
+
+    new Chart(canvas, config);
+  }
+
+  loadChart(
+    "{% url 'dashboard:api_reservations_by_month' %}",
+    "chart-reservations-month",
+    "line",
+    "Reservas",
+    palette.blue,
+    { plugins: { legend: { display: false } } }
+  );
+
+  loadChart(
+    "{% url 'dashboard:api_revenue_by_month' %}",
+    "chart-revenue-month",
+    "line",
+    "Ingresos",
+    palette.pink,
+    { plugins: { legend: { display: false } } }
+  );
+
+  loadChart(
+    "{% url 'dashboard:api_top_rooms' %}",
+    "chart-top-rooms",
+    "bar",
+    "Reservas",
+    [palette.blue, palette.cyan, palette.violet, palette.pink, palette.dark],
+    { indexAxis: "y", plugins: { legend: { display: false } } }
+  );
+
+  loadChart(
+    "{% url 'dashboard:api_reservations_by_status' %}",
+    "chart-status",
+    "doughnut",
+    "Estados",
+    [palette.blue, palette.cyan, palette.pink, palette.violet, palette.dark],
+    { scales: {}, plugins: { legend: { position: "right" } } }
+  );
+
+  loadChart(
+    "{% url 'dashboard:api_occupancy_by_type' %}",
+    "chart-occupancy",
+    "bar",
+    "Ocupacion",
+    palette.violet,
+    { plugins: { legend: { display: false } } }
+  );
+</script>
+{% endblock %}

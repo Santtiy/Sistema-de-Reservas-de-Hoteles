@@ -1,0 +1,31 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+
+# Entorno local
+.env
+*.sqlite3
+
+# Django
+/staticfiles/
+/media/
+
+# Editores
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Claude Code
+.claude/

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar tipo | Admin{% endblock %}
+
+{% block content %}
+  <div class="container-xxl py-4">
+    <div class="row justify-content-center"><div class="col-lg-6">
+      <div class="card card-elev p-4 text-center">
+        <i class="bi bi-exclamation-triangle text-warning" style="font-size: 48px;"></i>
+        <h3 class="mt-3">¿Eliminar tipo "{{ object.name }}"?</h3>
+        <p class="muted">Si hay habitaciones asociadas, la operación fallará.</p>
+        <form method="post" class="d-flex justify-content-center gap-2 mt-3">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Eliminar</button>
+          <a href="{% url 'rooms:type_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+      </div>
+    </div></div>
+  </div>
+{% endblock %}
