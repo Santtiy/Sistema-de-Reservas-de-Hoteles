@@ -3,47 +3,79 @@
 {% block title %}Inicio | Hotel Reservas{% endblock %}
 
 {% block content %}
+
+{# ══════════════════════════════════════════════════════════
+   VISITANTE (no autenticado)
+   ══════════════════════════════════════════════════════════ #}
+{% if not user.is_authenticated %}
   <div class="container-xxl py-5">
     <div class="row g-4 align-items-center">
       <div class="col-lg-6">
         <span class="badge-pill s-confirmed mb-3">Sistema de reservas 2026</span>
-        <h1 class="display-6 fw-bold" style="color: var(--navy);">Gestiona todo tu hotel en un solo lugar</h1>
-        <p class="muted fs-5">Controla habitaciones, reservas, reportes y operaciones con una interfaz moderna y clara.</p>
-        <div class="d-flex gap-2 flex-wrap">
-          <a class="btn btn-gold btn-lg" href="{% url 'rooms:list' %}"><i class="bi bi-door-closed me-1"></i>Ver habitaciones</a>
-          <a class="btn btn-outline-gold btn-lg" href="{% url 'accounts:register' %}"><i class="bi bi-person-plus me-1"></i>Crear cuenta</a>
+        <h1 class="display-6 fw-bold" style="color: var(--navy);">
+          Tu estadía perfecta comienza aquí
+        </h1>
+        <p class="muted fs-5">
+          Explora nuestras habitaciones, elige fechas y reserva en minutos.
+          Sin complicaciones, con confirmación instantánea por correo.
+        </p>
+        <div class="d-flex gap-2 flex-wrap mb-4">
+          <a class="btn btn-gold btn-lg" href="{% url 'rooms:list' %}">
+            <i class="bi bi-door-closed me-1"></i>Ver habitaciones
+          </a>
+          <a class="btn btn-outline-gold btn-lg" href="{% url 'accounts:register' %}">
+            <i class="bi bi-person-plus me-1"></i>Crear cuenta
+          </a>
+        </div>
+        <div class="d-flex gap-4 flex-wrap">
+          <div class="text-center">
+            <div class="fw-bold fs-4" style="color: var(--navy);">20+</div>
+            <div class="muted small">Habitaciones</div>
+          </div>
+          <div class="text-center">
+            <div class="fw-bold fs-4" style="color: var(--navy);">3</div>
+            <div class="muted small">Tipos disponibles</div>
+          </div>
+          <div class="text-center">
+            <div class="fw-bold fs-4" style="color: var(--navy);">48h</div>
+            <div class="muted small">Cancelación gratis</div>
+          </div>
         </div>
       </div>
       <div class="col-lg-6">
         <div class="card p-4 card-elev">
-          <h5 class="section-title">Resumen rapido</h5>
-          <div class="row g-3">
-            <div class="col-6">
-              <div class="card p-3 text-center">
-                <i class="bi bi-calendar-week text-gold" style="font-size: 24px;"></i>
-                <div class="muted small mt-1">Reservas del mes</div>
-                <div class="fw-bold" style="color: var(--navy);">156</div>
+          <h5 class="section-title mb-3">¿Cómo funciona?</h5>
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex gap-3 align-items-start">
+              <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                   style="width:36px;height:36px;background:var(--gold);color:#fff;font-weight:700;">1</div>
+              <div>
+                <div class="fw-semibold" style="color:var(--navy);">Elige tu habitación</div>
+                <div class="muted small">Filtra por fechas, tipo y capacidad.</div>
               </div>
             </div>
-            <div class="col-6">
-              <div class="card p-3 text-center">
-                <i class="bi bi-door-open text-gold" style="font-size: 24px;"></i>
-                <div class="muted small mt-1">Habitaciones activas</div>
-                <div class="fw-bold" style="color: var(--navy);">48</div>
+            <div class="d-flex gap-3 align-items-start">
+              <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                   style="width:36px;height:36px;background:var(--gold);color:#fff;font-weight:700;">2</div>
+              <div>
+                <div class="fw-semibold" style="color:var(--navy);">Crea tu cuenta</div>
+                <div class="muted small">Registro rápido, solo tus datos básicos.</div>
               </div>
             </div>
-            <div class="col-6">
-              <div class="card p-3 text-center">
-                <i class="bi bi-bar-chart text-gold" style="font-size: 24px;"></i>
-                <div class="muted small mt-1">Ocupacion</div>
-                <div class="fw-bold" style="color: var(--navy);">78%</div>
+            <div class="d-flex gap-3 align-items-start">
+              <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                   style="width:36px;height:36px;background:var(--gold);color:#fff;font-weight:700;">3</div>
+              <div>
+                <div class="fw-semibold" style="color:var(--navy);">Confirma y paga</div>
+                <div class="muted small">Pago simulado seguro. Recibes código por correo.</div>
               </div>
             </div>
-            <div class="col-6">
-              <div class="card p-3 text-center">
-                <i class="bi bi-currency-dollar text-gold" style="font-size: 24px;"></i>
-                <div class="muted small mt-1">Ingresos</div>
-                <div class="fw-bold" style="color: var(--navy);">$24,500</div>
+            <div class="d-flex gap-3 align-items-start">
+              <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                   style="width:36px;height:36px;background:var(--gold);color:#fff;font-weight:700;">4</div>
+              <div>
+                <div class="fw-semibold" style="color:var(--navy);">¡Disfruta tu estadía!</div>
+                <div class="muted small">Gestiona o cancela desde tu panel de reservas.</div>
               </div>
             </div>
           </div>
@@ -51,4 +83,166 @@
       </div>
     </div>
   </div>
+
+{# ══════════════════════════════════════════════════════════
+   CLIENTE autenticado
+   ══════════════════════════════════════════════════════════ #}
+{% elif user.role == 'CLIENTE' %}
+  <div class="container-xxl py-5">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-7">
+        <span class="badge-pill s-confirmed mb-3">Bienvenido/a de vuelta</span>
+        <h1 class="display-6 fw-bold" style="color: var(--navy);">
+          Hola, {{ user.first_name|default:user.username }} 👋
+        </h1>
+        <p class="muted fs-5">¿Qué quieres hacer hoy?</p>
+
+        <div class="row g-3 mt-1">
+          <div class="col-sm-6">
+            <a href="{% url 'rooms:list' %}" class="card card-elev h-100 text-decoration-none p-4 d-flex flex-column align-items-start">
+              <div class="mb-2" style="font-size:2rem; color:var(--gold);"><i class="bi bi-search"></i></div>
+              <div class="fw-bold mb-1" style="color:var(--navy);">Buscar habitaciones</div>
+              <div class="muted small">Filtra por fechas, tipo y disponibilidad en tiempo real.</div>
+              <span class="btn btn-sm btn-gold mt-3">Explorar</span>
+            </a>
+          </div>
+          <div class="col-sm-6">
+            <a href="{% url 'reservations:list' %}" class="card card-elev h-100 text-decoration-none p-4 d-flex flex-column align-items-start">
+              <div class="mb-2" style="font-size:2rem; color:var(--gold);"><i class="bi bi-journal-bookmark"></i></div>
+              <div class="fw-bold mb-1" style="color:var(--navy);">Mis reservas</div>
+              <div class="muted small">Consulta el estado, detalles y código QR de cada reserva.</div>
+              <span class="btn btn-sm btn-outline-gold mt-3">Ver reservas</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="card card-elev p-3 mt-3">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-info-circle text-gold"></i>
+            <span class="fw-semibold" style="color:var(--navy);">Política de cancelación</span>
+          </div>
+          <div class="muted small">
+            Puedes cancelar cualquier reserva hasta <strong>48 horas antes</strong> del check-in sin costo.
+            Pasado ese plazo, la cancelación no está disponible.
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card p-4 card-elev">
+          <h5 class="section-title mb-3">Tu cuenta</h5>
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <span class="avatar-circle" style="width:48px;height:48px;font-size:18px;">
+              {{ user.first_name|default:user.username|slice:":1" }}{{ user.last_name|slice:":1" }}
+            </span>
+            <div>
+              <div class="fw-semibold" style="color:var(--navy);">{{ user.get_full_name|default:user.username }}</div>
+              <div class="muted small">{{ user.email }}</div>
+              <span class="badge-pill s-confirmed" style="font-size:10px;">Cliente</span>
+            </div>
+          </div>
+          <a href="{% url 'accounts:profile' %}" class="btn btn-sm btn-outline-gold w-100">
+            <i class="bi bi-pencil me-1"></i>Editar perfil
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{# ══════════════════════════════════════════════════════════
+   ADMIN / RECEPCIONISTA
+   ══════════════════════════════════════════════════════════ #}
+{% else %}
+  <div class="container-xxl py-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+      <div>
+        <h1 class="h3 mb-1" style="color:var(--navy);">
+          Bienvenido/a, {{ user.first_name|default:user.username }}
+        </h1>
+        <div class="muted">
+          {% if user.role == 'ADMIN' %}
+            <span class="badge-pill s-checkedin">Administrador</span>
+          {% else %}
+            <span class="badge-pill s-confirmed">Recepcionista</span>
+          {% endif %}
+          &nbsp;— Acceso rápido al panel operativo
+        </div>
+      </div>
+    </div>
+
+    {# Accesos rápidos #}
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6 col-lg-3">
+        <a href="{% url 'dashboard:index' %}" class="card card-elev h-100 text-decoration-none p-4 d-flex flex-column align-items-start">
+          <div style="font-size:2rem; color:var(--gold);"><i class="bi bi-speedometer2"></i></div>
+          <div class="fw-bold mt-2 mb-1" style="color:var(--navy);">Dashboard</div>
+          <div class="muted small">KPIs, gráficos de ocupación e ingresos.</div>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <a href="{% url 'reservations:admin_list' %}" class="card card-elev h-100 text-decoration-none p-4 d-flex flex-column align-items-start">
+          <div style="font-size:2rem; color:var(--gold);"><i class="bi bi-calendar-check"></i></div>
+          <div class="fw-bold mt-2 mb-1" style="color:var(--navy);">Reservas</div>
+          <div class="muted small">Gestiona, cambia estado y procesa reembolsos.</div>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <a href="{% url 'rooms:admin_list' %}" class="card card-elev h-100 text-decoration-none p-4 d-flex flex-column align-items-start">
+          <div style="font-size:2rem; color:var(--gold);"><i class="bi bi-door-closed"></i></div>
+          <div class="fw-bold mt-2 mb-1" style="color:var(--navy);">Habitaciones</div>
+          <div class="muted small">Crea, edita y administra habitaciones e imágenes.</div>
+        </a>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <a href="{% url 'dashboard:reports' %}" class="card card-elev h-100 text-decoration-none p-4 d-flex flex-column align-items-start">
+          <div style="font-size:2rem; color:var(--gold);"><i class="bi bi-file-earmark-bar-graph"></i></div>
+          <div class="fw-bold mt-2 mb-1" style="color:var(--navy);">Reportes</div>
+          <div class="muted small">Exporta PDF/Excel de reservas, ingresos y ocupación.</div>
+        </a>
+      </div>
+    </div>
+
+    {# Acciones adicionales para Admin #}
+    {% if user.role == 'ADMIN' %}
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="card card-elev p-3">
+            <div class="fw-semibold mb-2" style="color:var(--navy);"><i class="bi bi-download me-2 text-gold"></i>Exportación rápida</div>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="{% url 'dashboard:export_reservations_pdf' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-filetype-pdf me-1"></i>Reservas PDF
+              </a>
+              <a href="{% url 'dashboard:export_reservations_excel' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-filetype-xlsx me-1"></i>Reservas Excel
+              </a>
+              <a href="{% url 'dashboard:export_revenue_pdf' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-filetype-pdf me-1"></i>Ingresos PDF
+              </a>
+              <a href="{% url 'dashboard:export_occupancy_pdf' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-filetype-pdf me-1"></i>Ocupación PDF
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-elev p-3">
+            <div class="fw-semibold mb-2" style="color:var(--navy);"><i class="bi bi-shield-lock me-2 text-gold"></i>Administración</div>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="/admin/auth/group/" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-people me-1"></i>Grupos y permisos
+              </a>
+              <a href="/admin/accounts/customuser/" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-person-gear me-1"></i>Usuarios
+              </a>
+              <a href="/admin/" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-grid me-1"></i>Panel Django
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+
 {% endblock %}

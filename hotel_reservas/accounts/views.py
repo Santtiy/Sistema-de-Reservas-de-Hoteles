@@ -9,14 +9,14 @@ from .models import CustomUser
 
 
 def _redirect_by_role(user: CustomUser):
-    if user.role == CustomUser.Roles.ADMIN:
+    if user.role in (CustomUser.Roles.ADMIN, CustomUser.Roles.RECEPCIONISTA):
         return redirect("dashboard:index")
-    if user.role == CustomUser.Roles.RECEPCIONISTA:
-        return redirect("reservations:list")
     return redirect("reservations:list")
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return _redirect_by_role(request.user)
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -32,6 +32,8 @@ def register(request):
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return _redirect_by_role(request.user)
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
