@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Reserva {{ object.confirmation_code }} | Hotel Reservas{% endblock %}
+
+{% block content %}
+  <div class="container-xxl py-4">
+    <a href="{% url 'reservations:list' %}" class="text-decoration-none muted"><i class="bi bi-arrow-left me-1"></i>Volver a mis reservas</a>
+
+    <div class="d-flex justify-content-between align-items-center mt-2 mb-4">
+      <div>
+        <h1 class="section-title mb-1">Reserva {{ object.confirmation_code }}</h1>
+        <div class="muted">Creada el {{ object.created_at|date:"d/m/Y" }}</div>
+      </div>
+      <span class="badge-pill
+        {% if object.status == 'PENDING' %}s-pending
+        {% elif object.status == 'CONFIRMED' %}s-confirmed
+        {% elif object.status == 'CHECKED_IN' %}s-checkedin
+        {% elif object.status == 'CHECKED_OUT' %}s-checkedout
+        {% else %}s-cancelled{% endif %}
+      ">
+        {{ object.get_status_display }}
+      </span>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="card card-elev p-4">
+          <h6 class="section-title">Detalles de la reserva</h6>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="muted small">Habitacion</div>
+              <div class="fw-semibold">{{ object.room.number }} · {{ object.room.room_type.name }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="muted small">Huespedes</div>
+              <div class="fw-semibold">{{ object.guests_count }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="muted small">Check-in</div>
+              <div class="fw-semibold">{{ object.check_in }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="muted small">Check-out</div>
+              <div class="fw-semibold">{{ object.check_out }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="muted small">Noches</div>
+              <div class="fw-semibold">{{ object.nights }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="muted small">Total</div>
+              <div class="fw-semibold">${{ object.total_price }}</div>
+            </div>
+          </div>
+
+          {% if object.notes %}
+            <hr>
+            <div class="muted small">Notas</div>
+            <div>{{ object.notes }}</div>
+          {% endif %}
+        </div>
+
+        <div class="card card-elev p-4 mt-4">
+          <h6 class="section-title">Pago</h6>
+          {% if object.payment %}
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="muted small">Metodo</div>
+                <div class="fw-semibold">{{ object.payment.get_method_display }}</div>
+              </div>
+              <div class="col-md-4">
+                <div class="muted small">Estado</div>
+                <div class="fw-semibold">{{ object.payment.get_status_display }}</div>
+              </div>
+              <div class="col-md-4">
+                <div class="muted small">Tarjeta</div>
+                <div class="fw-semibold">**** {{ object.payment.card_last4 }}</div>
+              </div>
+            </div>
+          {% else %}
+            <div class="muted">No hay informacion de pago.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card card-elev p-4 text-center">
+          <h6 class="section-title">Codigo QR</h6>
+          <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR" class="img-fluid" style="max-width: 240px;">
+          <p class="muted small mt-3">Presenta este codigo al hacer check-in.</p>
+        </div>
+
+        {% if object.can_be_cancelled %}
+          <div class="card card-elev p-4 mt-4">
+            <h6 class="section-title">Cancelar reserva</h6>
+            <p class="muted">Cancelacion gratuita si faltan mas de 48 horas.</p>
+            <a href="{% url 'reservations:cancel' object.pk %}" class="btn btn-outline-danger w-100">Cancelar reserva</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

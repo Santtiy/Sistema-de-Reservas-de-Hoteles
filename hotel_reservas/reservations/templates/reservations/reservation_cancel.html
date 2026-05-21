@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Cancelar reserva | Hotel Reservas{% endblock %}
+
+{% block content %}
+  <div class="container-xxl py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="card card-elev p-4">
+          <h3 class="section-title">Cancelar reserva {{ reservation.confirmation_code }}</h3>
+          <div class="alert alert-warning small">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            Cancelacion gratuita si faltan mas de 48 horas para el check-in.
+          </div>
+          <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="d-flex gap-2 mt-2">
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i>Confirmar cancelacion
+              </button>
+              <a href="{% url 'reservations:detail' reservation.pk %}" class="btn btn-outline-secondary">Volver</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

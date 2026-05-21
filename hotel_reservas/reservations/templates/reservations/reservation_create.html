@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Confirmar reserva | Hotel Reservas{% endblock %}
+
+{% block content %}
+  <div class="container-xxl py-4">
+    <a href="{% url 'rooms:list' %}" class="text-decoration-none muted"><i class="bi bi-arrow-left me-1"></i>Volver al catalogo</a>
+
+    <div class="row g-4 mt-2">
+      <div class="col-lg-7">
+        <div class="card card-elev overflow-hidden">
+          {% if room.main_image %}
+            <img src="{{ room.main_image.image }}" alt="{{ room.main_image.caption }}"
+                 class="w-100" style="height: 260px; object-fit: cover;">
+          {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 260px;">
+              <i class="bi bi-image text-muted" style="font-size: 48px;"></i>
+            </div>
+          {% endif %}
+          <div class="p-4">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h3 class="section-title mb-1">Habitacion {{ room.number }}</h3>
+                <div class="muted">{{ room.room_type.name }} · Piso {{ room.floor }}</div>
+              </div>
+              <span class="badge-pill s-available">{{ room.get_status_display }}</span>
+            </div>
+            <div class="mt-3">
+              <h6 class="section-title">Detalles</h6>
+              <div class="d-flex gap-3 flex-wrap">
+                <span><i class="bi bi-people text-gold me-1"></i>{{ room.room_type.capacity }} huesped{{ room.room_type.capacity|pluralize:"es" }}</span>
+                <span><i class="bi bi-currency-dollar text-gold me-1"></i>${{ room.room_type.base_price }} / noche</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-elev p-4 mt-4">
+          <h6 class="section-title">Resumen de fechas</h6>
+          <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+              <tbody>
+                <tr><th>Check-in</th><td>{{ check_in }}</td></tr>
+                <tr><th>Check-out</th><td>{{ check_out }}</td></tr>
+                <tr><th>Noches</th><td>{{ nights }}</td></tr>
+                <tr><th>Precio / noche</th><td>${{ room.room_type.base_price }}</td></tr>
+                <tr><th>Total</th><td><strong>${{ total }}</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card card-elev p-4">
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="room" value="{{ room.pk }}">
+            <input type="hidden" name="check_in" value="{{ check_in|date:'Y-m-d' }}">
+            <input type="hidden" name="check_out" value="{{ check_out|date:'Y-m-d' }}">
+
+            <h6 class="section-title">Datos de la reserva</h6>
+            {{ reservation_form|crispy }}
+
+            <h6 class="section-title mt-4">Pago simulado</h6>
+            <div class="alert alert-warning small">
+              <i class="bi bi-exclamation-triangle me-1"></i>Pago simulado, no se procesaran datos reales.
+            </div>
+            {{ payment_form|crispy }}
+
+            <button type="submit" class="btn btn-gold w-100 mt-2">
+              <i class="bi bi-check2-circle me-1"></i>Confirmar reserva
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

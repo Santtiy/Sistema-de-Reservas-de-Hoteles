@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis reservas | Hotel Reservas{% endblock %}
+
+{% block content %}
+  <div class="container-xxl py-4">
+    <div class="page-head mb-4">
+      <h1 class="section-title">Mis reservas</h1>
+      <div class="sub">Historial y estado de tus reservas.</div>
+    </div>
+
+    {% if object_list %}
+      <div class="row g-3">
+        {% for reservation in object_list %}
+          <div class="col-md-6 col-xl-4">
+            <div class="card card-elev h-100">
+              <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <div class="muted small">Codigo</div>
+                    <h5 class="mb-1" style="color: var(--navy);">{{ reservation.confirmation_code }}</h5>
+                  </div>
+                  <span class="badge-pill
+                    {% if reservation.status == 'PENDING' %}s-pending
+                    {% elif reservation.status == 'CONFIRMED' %}s-confirmed
+                    {% elif reservation.status == 'CHECKED_IN' %}s-checkedin
+                    {% elif reservation.status == 'CHECKED_OUT' %}s-checkedout
+                    {% else %}s-cancelled{% endif %}
+                  ">
+                    {{ reservation.get_status_display }}
+                  </span>
+                </div>
+
+                <div class="muted small mb-2">Habitacion {{ reservation.room.number }} · {{ reservation.room.room_type.name }}</div>
+                <div class="mb-2">
+                  <i class="bi bi-calendar-event text-gold me-1"></i>
+                  {{ reservation.check_in }} → {{ reservation.check_out }}
+                </div>
+                <div class="fw-bold" style="color: var(--navy);">
+                  Total: ${{ reservation.total_price }}
+                </div>
+                <div class="mt-auto pt-3">
+                  <a href="{% url 'reservations:detail' reservation.pk %}" class="btn btn-sm btn-gold w-100">Ver detalle</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+        <nav class="mt-4">
+          <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+    {% else %}
+      <div class="card card-elev p-5 text-center">
+        <i class="bi bi-calendar-x text-muted" style="font-size: 48px;"></i>
+        <h5 class="mt-3">Aun no tienes reservas</h5>
+        <p class="muted">Explora el catalogo para reservar una habitacion.</p>
+        <a href="{% url 'rooms:list' %}" class="btn btn-gold">Ver habitaciones</a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
