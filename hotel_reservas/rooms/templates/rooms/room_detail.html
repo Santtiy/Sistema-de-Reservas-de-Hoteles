@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Habitación {{ room.number }} | Hotel Reservas{% endblock %}
+
+{% block content %}
+  <div class="container-xxl py-4">
+    <a href="{% url 'rooms:list' %}" class="text-decoration-none muted"><i class="bi bi-arrow-left me-1"></i>Volver al catálogo</a>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-8">
+        <div class="card card-elev overflow-hidden">
+          {% if images %}
+            <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                {% for img in images %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ img.image }}" alt="{{ img.caption }}"
+                         class="d-block w-100" style="height: 420px; object-fit: cover;">
+                    {% if img.caption %}
+                      <div class="carousel-caption d-none d-md-block">
+                        <p>{{ img.caption }}</p>
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+              {% if images|length > 1 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+                  <span class="carousel-control-next-icon"></span>
+                </button>
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 420px;">
+              <i class="bi bi-image text-muted" style="font-size: 64px;"></i>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="card card-elev p-4 mt-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h2 style="color: var(--navy);">Habitación {{ room.number }}</h2>
+              <div class="muted">{{ room.room_type.name }} · Piso {{ room.floor }}</div>
+            </div>
+            <span class="badge-pill {% if room.status == 'AVAILABLE' %}s-available{% elif room.status == 'MAINTENANCE' %}s-pending{% else %}s-cancelled{% endif %}">
+              {{ room.get_status_display }}
+            </span>
+          </div>
+
+          <p>{{ room.description|linebreaksbr }}</p>
+
+          <h6 class="section-title mt-3">Detalles del tipo</h6>
+          <p class="muted mb-2">{{ room.room_type.description }}</p>
+          <div class="d-flex gap-3 flex-wrap">
+            <span><i class="bi bi-people text-gold me-1"></i>Capacidad: {{ room.room_type.capacity }}</span>
+            <span><i class="bi bi-currency-dollar text-gold me-1"></i>${{ room.room_type.base_price }} / noche</span>
+          </div>
+
+          {% if room.amenities.all %}
+            <h6 class="section-title mt-4">Amenities</h6>
+            <div class="d-flex flex-wrap gap-2">
+              {% for a in room.amenities.all %}
+                <span class="badge-pill s-pending"><i class="{{ a.icon }} me-1"></i>{{ a.name }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <aside class="col-lg-4">
+        <div class="card card-elev p-3 sticky-top" style="top: 80px;">
+          <h6 class="section-title">Selecciona tus fechas</h6>
+          <form method="get">
+            {{ search_form.check_in|as_crispy_field }}
+            {{ search_form.check_out|as_crispy_field }}
+            <button type="submit" class="btn btn-gold w-100"><i class="bi bi-calendar-check me-1"></i>Consultar disponibilidad</button>
+          </form>
+
+          {% if check_in and check_out %}
+            <hr>
+            <div class="d-flex justify-content-between"><span class="muted">Noches</span><strong>{{ nights }}</strong></div>
+            <div class="d-flex justify-content-between"><span class="muted">Precio / noche</span><strong>${{ room.room_type.base_price }}</strong></div>
+            <hr>
+            <div class="d-flex justify-content-between"><strong>Total</strong><strong style="color: var(--navy); font-size: 18px;">${{ total_price }}</strong></div>
+
+            {% if is_available %}
+              {% if user.is_authenticated %}
+                <a href="{% url 'reservations:create' %}?room={{ room.pk }}&check_in={{ check_in|date:'Y-m-d' }}&check_out={{ check_out|date:'Y-m-d' }}"
+                   class="btn btn-gold w-100 mt-3"><i class="bi bi-bookmark-check me-1"></i>Reservar</a>
+              {% else %}
+                <a href="{% url 'accounts:login' %}?next={% url 'rooms:detail' room.pk %}?check_in={{ check_in|date:'Y-m-d' }}%26check_out={{ check_out|date:'Y-m-d' }}"
+                   class="btn btn-gold w-100 mt-3">Iniciar sesión para reservar</a>
+              {% endif %}
+            {% else %}
+              <div class="alert alert-warning mt-3 mb-0 small"><i class="bi bi-exclamation-triangle me-1"></i>No disponible en esas fechas.</div>
+            {% endif %}
+          {% endif %}
+        </div>
+      </aside>
+    </div>
+  </div>
+{% endblock %}
