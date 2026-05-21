@@ -270,3 +270,4 @@ El panel de administración de Django está disponible en `/admin/`.
 Proyecto académico desarrollado como trabajo final de curso.
 
 - **Santtiy** — [GitHub](https://github.com/Santtiy)
+- **SamuelMenan** — [GitHub](https://github.com/SamuelMenan)
