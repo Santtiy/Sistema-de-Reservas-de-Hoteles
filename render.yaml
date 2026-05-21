@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: hotel-reservas
+    env: python
+    region: oregon
+    rootDir: hotel_reservas
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn core.wsgi:application"
+    healthCheckPath: /
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings.prod
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hotel-db
+          property: connectionString
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      # Email — completar con credenciales reales antes del deploy
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USE_TLS
+        value: "True"
+      - key: EMAIL_HOST_USER
+        value: ""           # completar en dashboard de Render
+      - key: EMAIL_HOST_PASSWORD
+        value: ""           # completar en dashboard de Render
+      - key: DEFAULT_FROM_EMAIL
+        value: ""           # completar en dashboard de Render
+
+databases:
+  - name: hotel-db
+    databaseName: hotel_reservas_db
+    user: hotel_user
+    plan: free
