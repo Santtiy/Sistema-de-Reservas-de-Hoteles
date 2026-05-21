@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes{% endblock %}
+
+{% block content %}
+<section class="container-xxl py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 class="h4 mb-3">Generar reportes</h1>
+          <form id="report-form"
+                data-reservations-pdf="{% url 'dashboard:reservations_pdf' %}"
+                data-reservations-excel="{% url 'dashboard:reservations_excel' %}"
+                data-revenue-pdf="{% url 'dashboard:revenue_pdf' %}"
+                data-revenue-excel="{% url 'dashboard:revenue_excel' %}"
+                data-occupancy-pdf="{% url 'dashboard:occupancy_pdf' %}">
+            <div class="mb-3">
+              <label class="form-label d-block">Tipo de reporte</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="report_type" id="report-reservations" value="reservations" checked>
+                <label class="form-check-label" for="report-reservations">Reservas</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="report_type" id="report-revenue" value="revenue">
+                <label class="form-check-label" for="report-revenue">Ingresos</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="report_type" id="report-occupancy" value="occupancy">
+                <label class="form-check-label" for="report-occupancy">Ocupacion</label>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label" for="fecha-inicio">Fecha inicio</label>
+                <input class="form-control" type="date" id="fecha-inicio" name="fecha_inicio">
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label" for="fecha-fin">Fecha fin</label>
+                <input class="form-control" type="date" id="fecha-fin" name="fecha_fin">
+              </div>
+            </div>
+
+            <div class="mb-3" id="status-filter">
+              <label class="form-label" for="status">Estado (solo reservas)</label>
+              <select class="form-select" id="status" name="status">
+                <option value="ALL">Todos</option>
+                <option value="PENDING">Pendiente</option>
+                <option value="CONFIRMED">Confirmada</option>
+                <option value="CHECKED_IN">Check-in</option>
+                <option value="CHECKED_OUT">Check-out</option>
+                <option value="CANCELLED">Cancelada</option>
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label d-block">Formato</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="format" id="format-pdf" value="pdf" checked>
+                <label class="form-check-label" for="format-pdf">PDF</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="format" id="format-excel" value="excel">
+                <label class="form-check-label" for="format-excel">Excel</label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Generar reporte</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const form = document.getElementById("report-form");
+  const statusFilter = document.getElementById("status-filter");
+
+  function updateStatusVisibility() {
+    const type = form.querySelector("input[name='report_type']:checked").value;
+    statusFilter.classList.toggle("d-none", type !== "reservations");
+  }
+
+  form.querySelectorAll("input[name='report_type']").forEach((input) => {
+    input.addEventListener("change", updateStatusVisibility);
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const type = form.querySelector("input[name='report_type']:checked").value;
+    const format = form.querySelector("input[name='format']:checked").value;
+    const fechaInicio = document.getElementById("fecha-inicio").value;
+    const fechaFin = document.getElementById("fecha-fin").value;
+    const status = document.getElementById("status").value;
+
+    const endpoints = {
+      reservations: {
+        pdf: form.dataset.reservationsPdf,
+        excel: form.dataset.reservationsExcel,
+      },
+      revenue: {
+        pdf: form.dataset.revenuePdf,
+        excel: form.dataset.revenueExcel,
+      },
+      occupancy: {
+        pdf: form.dataset.occupancyPdf,
+      },
+    };
+
+    let targetUrl = endpoints[type][format] || endpoints[type].pdf;
+
+    const params = new URLSearchParams();
+    if (fechaInicio) params.append("fecha_inicio", fechaInicio);
+    if (fechaFin) params.append("fecha_fin", fechaFin);
+    if (type === "reservations" && status) params.append("status", status);
+
+    if (params.toString()) {
+      targetUrl = `${targetUrl}?${params.toString()}`;
+    }
+
+    window.open(targetUrl, "_blank");
+  });
+
+  updateStatusVisibility();
+</script>
+{% endblock %}
