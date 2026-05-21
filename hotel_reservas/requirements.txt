@@ -10,3 +10,4 @@ django-crispy-forms
 reportlab
 openpyxl
 qrcode
+Faker
